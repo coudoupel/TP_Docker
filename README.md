@@ -3,7 +3,7 @@
 Pour réaliser ce projet, l'environnement devra être réaliser comme tel:  
   
 - Création d'une VM Debian 12  
-- Installation de docker 
+- Installation de Docker 
   
 Pour ce projet, j'ai décider de mettre en place GLPI, un logiciel libre de gestion des services informatiques et d'assistance.  
   
