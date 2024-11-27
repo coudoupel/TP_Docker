@@ -232,3 +232,53 @@ Il transmet l'adresse IP réelle du client au backend.
 >proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }
 
 Il ajoute l'adresse IP du client à une liste d'adresses dans l'en-tête HTTP.
+
+## Conclusion
+Maintenant que tous les fichiers sont configuré, il suffit de le mettre dans le même répertoire puis exécuter la commande :
+```bash
+docker compose up -d
+```
+Pour lancer la création des conteneurs.
+
+## Optionnel
+
+Il est possible de rajouter un script (sauvegarde.sh) de sauvegarde automatique des volumes.
+
+```bash
+#!/bin/bash
+
+# Dossier où seront stockées les sauvegardes
+BACKUP_DIR="/path/to/backup/directory"
+DATE=$(date +\%Y\%m\%d\%H\%M\%S)
+BACKUP_NAME="docker_volume_backup_$DATE.tar.gz"
+
+# Liste des volumes Docker à sauvegarder
+VOLUMES=$(docker volume ls -q)
+
+# Crée un fichier de sauvegarde tar.gz
+docker run --rm -v $VOLUMES:/volumes -v $BACKUP_DIR:/backup busybox tar czf /backup/$BACKUP_NAME -C /volumes .
+
+# Affiche un message de confirmation
+echo "Sauvegarde effectuée avec succès. Fichier de sauvegarde : $BACKUP_DIR/$BACKUP_NAME"
+```
+Pour automatiser la sauvegarde, on ajoute ce script dans une tâche cron:
+
+Dans le fichier crontab :
+
+`0 0 * * * /path/to/sauvegarde.sh` 
+
+Cela exécutera le script tous les jours à 00:00.
+
+On peux également créer un script de restauration (restauration.sh):
+
+```bash
+#!/bin/bash
+
+# Dossier où sont stockées les sauvegardes
+BACKUP_DIR="/path/to/backup/directory"
+BACKUP_FILE="docker_volume_backup_YYYYMMDDHHMMSS.tar.gz"
+
+# Création d'un conteneur temporaire pour restaurer la sauvegarde
+docker run --rm -v $BACKUP_DIR:/backup -v /var/lib/docker/volumes:/volumes busybox tar xzf /backup/$BACKUP_FILE -C /volumes
+```
+Ici, on restaure la sauvegarde en extrayant le fichier tar dans le répertoire des volumes Docker.
