@@ -19,7 +19,7 @@ Je vais monter 3 conteneur pour ma solution :
 - **Rôle principal** : Sert de passerelle d'entrée.
 
   -   Reçoit les requêtes des utilisateurs via le navigateur (HTTP/HTTPS).
-  -   Redirige ces requêtes vers le backend (`glpi`) via un proxy inversé.
+  -   Redirige ces requêtes vers le backend (`GLPI`) via un proxy inversé.
 
 #### Backend (GLPI)
 
@@ -102,7 +102,7 @@ Nos 3 conteneurs sont représentés par les 3 "blocs" dans le fichier:
 #### GLPI (backend)  
 >image: diouxx/glpi:latest  
   
-J'ai récupérer la dernière version de l'image glpi sur dockerhub et certifié ce qui m'assure un bon fonctionnement.  
+J'ai récupérer la dernière version de l'image GLPI sur Dockerhub et certifié ce qui m'assure un bon fonctionnement.  
   
 > environment:  
 GLPI_DB_HOST: db  
@@ -110,13 +110,13 @@ GLPI_DB_NAME: bdd_glpi
 GLPI_DB_USER: user1  
 GLPI_DB_PASSWORD: donttouchmydb  
   
-Toutes les données de mon glpi seront stockées sur ma BDD mariadb, je dois donc spécifier le nom de l'hôte ainsi que le nom de ma base de données, le user est le mot de passe de celle-ci.  Ces données seront identiques sur le conteneur mariadb. 
+Toutes les données de mon GLPI seront stockées sur ma BDD mariadb, je dois donc spécifier le nom de l'hôte ainsi que le nom de ma base de données, le user est le mot de passe de celle-ci.  Ces données seront identiques sur le conteneur mariadb. 
 
 >restart: unless-stopped 
 
 Si mon conteneur s'arrête d'une autre façon que part une exécution manuelle, il redémarrera automatiquement. (appliqué sur les 3 conteneurs)
   
-Je précise également que glpi dépend de ma BDD , on vérifie que le conteneur db est démarré avant de démarrer le conteneur glpi
+Je précise également que GLPI dépend de ma BDD , on vérifie que le conteneur db est démarré avant de démarrer le conteneur GLPI
 > depend_on:  
     - db  
   
@@ -126,12 +126,12 @@ Je précise également que glpi dépend de ma BDD , on vérifie que le conteneur
   
 On récupère également la dernière image à jour mais pour nginx cette fois-ci.  
   
-C'est nginx qui va nous permetrre d'afficher l'interface graphique de glpi, on précise donc un port sur lequel on va l'exposer, pour ma part le **8085**.  
+C'est nginx qui va nous permetrre d'afficher l'interface graphique de GLPI, on précise donc un port sur lequel on va l'exposer, pour ma part le **8085**.  
   
 > ports:  
 - "8085:80"  
   
-Je précise également que nginx dépend de mon glpi, on vérifie que le conteneur glpi est démarré avant de démarrer le conteneur nginx
+Je précise également que nginx dépend de mon GLPI, on vérifie que le conteneur GLPI est démarré avant de démarrer le conteneur nginx
   
 > depends_on:  
 - glpi  
@@ -193,7 +193,7 @@ Un réseau **public_network** et **private_network**.
 
 ### Description du fichier nginx.conf
 
-Pour faire en sorte que les requêtes entre un utilisateur et glpi passe obligatoirement par nginx, il a fallu configuré le nginx.conf . Voilà à quoi il ressemble:
+Pour faire en sorte que les requêtes entre un utilisateur et GLPI passe obligatoirement par nginx, il a fallu configuré le nginx.conf . Voilà à quoi il ressemble:
 
 ```bash
 worker_processes 1;
@@ -222,7 +222,7 @@ Ce  fichier permet de configuré nginx comme un reverse proxy, c'est à dire qu'
 
 >proxy_pass http://glpi:80; 
 
-Il redirige toutes les requêtes capturées vers le conteneur glpi sur son port 80.
+Il redirige toutes les requêtes capturées vers le conteneur GLPI sur son port 80.
 >proxy_set_header Host $host; 
 
 Il transmet le nom d'hôte original au backend.
