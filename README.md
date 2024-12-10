@@ -89,7 +89,8 @@ networks:
   public_network:
     driver: bridge
   private_network:
-    driver: bridge```
+    driver: bridge
+```
 
  
 ### Expliquation du fichier :
