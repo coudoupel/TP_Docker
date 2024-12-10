@@ -90,7 +90,6 @@ networks:
     driver: bridge
   private_network:
     driver: bridge
-  
 ```  
 ### Expliquation du fichier :
 Nos 3 conteneurs sont représentés par les 3 "blocs" dans le fichier :
